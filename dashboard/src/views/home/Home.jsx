@@ -1,7 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import api from "../../utils/api";
-import CommonTable from "../../components/commons/CommonTable";
 import { Pagination, Table } from "antd";
 
 const HomePage = () => {

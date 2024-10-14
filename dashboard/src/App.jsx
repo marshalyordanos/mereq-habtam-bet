@@ -7,7 +7,7 @@ import Dashboard from "./views/dashboard/Dashboard";
 import Login from "./views/auth/Login";
 import PrizesList from "./views/prizes/PrizesList";
 import PuzzlesList from "./views/puzzles/PuzzlesList";
-import HomePage from "./views/home/home";
+import HomePage from "./views/home/Home";
 import PrivateRoutes from "./utils/ProtectedRoutes";
 
 function App() {
