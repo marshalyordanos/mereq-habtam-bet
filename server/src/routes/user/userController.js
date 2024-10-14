@@ -7,7 +7,12 @@ const UserPuzzle = require("../../models/userPuzzleModel");
 const getUserAndPrizeStats = catchAsync(async (req, res, next) => {
   try {
     // 1. Count all users
-    const userCount = await User.countDocuments({ email: "" });
+    const userCount = await User.countDocuments({
+      $or: [
+        { email: "" }, // Condition for empty email
+        { email: { $exists: false } }, // Condition for non-existent email
+      ],
+    });
 
     // 2. Sum the `count` field from the `Prize` model for all associated UserPrize entries
     const totalPrizeCount = await UserPrize.aggregate([
@@ -54,7 +59,12 @@ const getUserAndPrizeStats = catchAsync(async (req, res, next) => {
 
 const getAllUsersWithPrizesAndPuzzles = catchAsync(async (req, res, next) => {
   try {
-    const users = await User.find({ email: "" })
+    const users = await User.find({
+      $or: [
+        { email: "" }, // Condition for empty email
+        { email: { $exists: false } }, // Condition for non-existent email
+      ],
+    })
       .populate({
         path: "userPrizes", // Populates the userPrizes virtual field
         populate: { path: "prize_id" }, // Populates prize details inside UserPrize
