@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+input{
+  /* border: 1px solid lightgray !important; */
+}
+
+*{
+  margin: 0;
+  padding: 0;
+}
+
+/* .ant-select-selector{
+  border: 1px solid rgb(161, 161, 161)  !important;
+  padding: 19px !important;
+  min-width: 200px;
+} */
+
+body{
+  background-color: #020202 !important;
+}
+/* .ant-switch-inner-unchecked,.ant-switch-inner-checked{
+  background-color: gray !important;
+}
+
+&.ant-switch-checked .ant-switch-handle {
+  background-color: red !important;
+} */

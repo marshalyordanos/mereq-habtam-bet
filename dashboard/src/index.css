@@ -1,0 +1,63 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "Roboto M";
+  src: url("./assets/Roboto-Medium.ttf");
+}
+@font-face {
+  font-family: "Roboto R";
+  src: url("./assets/Roboto-Regular.ttf");
+}
+@font-face {
+  font-family: "Roboto B";
+  src: url("./assets/Roboto-Bold.ttf");
+}
+@font-face {
+  font-family: "Roboto Bla";
+  src: url("./assets/Roboto-Black.ttf");
+}
+
+.ant-menu-item.ant-menu-item-active {
+  background-color: #168a53 !important;
+}
+.center-error-message:where(.ant-form-item) .ant-form-item-explain-error {
+  text-align: center;
+}
+.ant-float-btn-body {
+  background-color: #009d2fc8 !important;
+  color: white !important;
+}
+
+
+/* .otpfocus {
+  border: 1px solid #ff0000 !important;
+  background-color: red;
+  /* width: 47px !important;
+  height: 66px !important;
+  border-radius: 5px !important;
+  margin-right: 10px !important;
+  margin-left: 10px !important; */
+/* }  */
+
+/* .ant-pagination .ant-pagination-item-active {
+  background-color: #009d2fc8 !important;
+  color: white !important;
+  border: 1px solid white !important;
+}
+.ant-pagination .ant-pagination-item {
+  background-color: #c40090 !important;
+  color: white !important;
+} */
+
+/* .jojo {
+  border: 1px solid green !important;
+}
+.lolo {
+  border: 1px solid purple !important;
+}
+
+.copy-button {
+  margin-left: 8px;
+} */
