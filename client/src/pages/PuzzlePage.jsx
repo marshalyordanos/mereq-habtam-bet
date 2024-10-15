@@ -49,7 +49,7 @@ const PuzzlePage = () => {
   const [getPuzzle, setGetPuzzle] = useState(false);
 
   useEffect(() => {
-    setLoadingSpin(false);
+    // setLoadingSpin(false);
 
     featchUserPuzzle();
   }, [user]);

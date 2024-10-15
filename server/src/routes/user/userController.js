@@ -15,25 +15,16 @@ const getUserAndPrizeStats = catchAsync(async (req, res, next) => {
     });
 
     // 2. Sum the `count` field from the `Prize` model for all associated UserPrize entries
-    const totalPrizeCount = await UserPrize.aggregate([
-      {
-        $lookup: {
-          from: "prizes", // The `prizes` collection
-          localField: "prize_id", // Field in UserPrize
-          foreignField: "_id", // Field in Prize
-          as: "prizeDetails", // Prize details array
-        },
-      },
-      {
-        $unwind: "$prizeDetails", // Unwind the prizeDetails array
-      },
+    let totalPrizeCount = await Prize.aggregate([
       {
         $group: {
-          _id: null, // Group by null to sum all
-          totalPrizeCount: { $sum: "$prizeDetails.count" }, // Sum the `count` field in Prize
+          _id: null, // Group all documents together
+          totalCount: { $sum: "$count" }, // Sum the 'count' field
         },
       },
     ]);
+
+    // totalPrizeCount=  totalPrizeCount.length > 0 ? totalPrizeCount[0].totalCount : 0; //
 
     // 3. Count all entries in the UserPrize table
     const userPrizeCount = await UserPrize.countDocuments();
