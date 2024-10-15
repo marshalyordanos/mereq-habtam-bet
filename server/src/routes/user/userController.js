@@ -3,6 +3,7 @@ const AppErorr = require("../../utils/appError");
 const catchAsync = require("../../utils/catchAsync");
 const UserPrize = require("../../models/userPrizeModel");
 const UserPuzzle = require("../../models/userPuzzleModel");
+const Prices = require("../../models/prizeModel");
 
 const getUserAndPrizeStats = catchAsync(async (req, res, next) => {
   try {
