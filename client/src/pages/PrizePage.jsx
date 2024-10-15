@@ -110,7 +110,7 @@ const SpinWheel = () => {
   const handleSpinClick = async () => {
     try {
       const response = await api.post("/spin/prize", {
-        userId: user2?.data?.user?.prizeChance,
+        userId: user2?.data?.user?._id,
       });
       const selectedPrize = response.data.data.prize;
 
