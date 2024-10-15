@@ -64,10 +64,6 @@ const Dashboard = ({ children, collapsed, setCollapsed }) => {
   }, []);
   const items = [
     {
-      key: "1",
-      label: <Link to="/profile">Profile</Link>,
-    },
-    {
       key: "2",
       label: <button onClick={() => dispatch(logout())}>Logout</button>,
       icon: (
