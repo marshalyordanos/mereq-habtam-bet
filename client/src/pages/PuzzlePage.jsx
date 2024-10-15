@@ -13,7 +13,7 @@ import AssetSeven from "../assets/Asset_25.png";
 import AssetEigth from "../assets/Asset_26.png";
 import AssetNine from "../assets/Asset_27.png";
 import CustomModal from "../compoents/CustomModal";
-import { message } from "antd";
+import { Button, message, Spin } from "antd";
 import { useUser, useUserLogin } from "../userContex";
 import { NavLink } from "react-router-dom";
 // Array of assets for the puzzle pieces
@@ -33,6 +33,7 @@ const PuzzlePage = () => {
   const user = useUser();
   const userLogin = useUserLogin();
   console.log("user", user);
+  const [loadingSpin, setLoadingSpin] = useState(false);
   // console.log("user", user);
 
   // const numbers = ["H", "A", "B", "T", "A", "M", "B", "E", "T"];
@@ -53,13 +54,16 @@ const PuzzlePage = () => {
   const featchUserPuzzle = async () => {
     //http://localhost:8000/api/v1/
     try {
+      setLoading(true);
       if (user) {
         const res = await api.get(`/puzzle/user/` + user?.data?.user?._id);
         console.log("data", res.data?.data);
         setNumbers(res.data?.data);
       }
+      setLoading(false);
     } catch (error) {
       console.log(error);
+      setLoading(false);
     }
   };
   const featchPice = async () => {
@@ -68,7 +72,7 @@ const PuzzlePage = () => {
     setNumbers(res.data?.data);
   };
   const spinApiHandler = async () => {
-    setLoading(true);
+    setLoadingSpin(true);
 
     try {
       const res = await api.post(`/spin`, {
@@ -79,10 +83,13 @@ const PuzzlePage = () => {
       if (res.data?.message) {
         window.location.reload();
       }
+      setLoadingSpin(false);
     } catch (error) {
       if (error.response.data.message) {
         message.error(error.response.data.message);
       }
+      setLoadingSpin(false);
+
       console.log(error);
     }
   };
@@ -268,86 +275,92 @@ const PuzzlePage = () => {
         <p className="">Play our puzzle game and win exciting prizes!</p>
         <div className="mb-10"></div>
         {/* <div className=" border h-72 w-72 mt-10 rounded-lg"></div> */}
-        <div className="flex relative justify-center items-center    ">
-          <div className="flex flex-wrap  max-w-[320px]">
-            {numbers?.map((number, i) => (
-              <div
-                style={{
-                  marginLeft:
-                    i == 1
-                      ? -14
-                      : i == 2
-                      ? -16
-                      : i == 4
-                      ? -14
-                      : i == 5
-                      ? -16
-                      : i == 7
-                      ? -15
-                      : i == 8
-                      ? -15
-                      : 0,
-                  marginTop:
-                    i == 1
-                      ? -1
-                      : i == 2
-                      ? -2
-                      : i == 3
-                      ? -23
-                      : i == 4
-                      ? -23
-                      : i == 5
-                      ? -25
-                      : i == 6
-                      ? -20
-                      : i == 7
-                      ? -20
-                      : i == 8
-                      ? -23
-                      : 0,
-
-                  height: i == 1 ? 100 : i == 2 ? 100 : 96,
-                  width:
-                    i == 1
-                      ? 110
-                      : i == 2
-                      ? 110
-                      : i == 4
-                      ? 125
-                      : i == 7
-                      ? 110
-                      : i == 8
-                      ? 110
-                      : 96,
-                  // backgroundColor: activeIndex === i && "#ace403",
-                  // color: activeIndex === i && "black",
-                }}
-                key={number._id}
-                className={`flex justify-center  items-center  text-2xl font-bold ${
-                  activeIndex?.id === number.id ? "active" : ""
-                }}`}
-                // className="bg-white"
-              >
-                <img
-                  style={{
-                    opacity:
-                      activeIndex?.id === number.id
-                        ? 1
-                        : number.count !== 0
-                        ? 0.7
-                        : 0.2,
-                  }}
-                  className="w-full  opacity-[0.5] h-full  object-contain"
-                  width={100}
-                  height={100}
-                  src={assets[i]}
-                  alt=""
-                />
-                {/* <p>{i}</p> */}
-              </div>
-            ))}
+        {loadding ? (
+          <div className="p-16">
+            <Spin />
           </div>
-        </div>
+        ) : (
+          <div className="flex relative justify-center items-center    ">
+            <div className="flex flex-wrap  max-w-[320px]">
+              {numbers?.map((number, i) => (
+                <div
+                  style={{
+                    marginLeft:
+                      i == 1
+                        ? -14
+                        : i == 2
+                        ? -16
+                        : i == 4
+                        ? -14
+                        : i == 5
+                        ? -16
+                        : i == 7
+                        ? -15
+                        : i == 8
+                        ? -15
+                        : 0,
+                    marginTop:
+                      i == 1
+                        ? -1
+                        : i == 2
+                        ? -2
+                        : i == 3
+                        ? -23
+                        : i == 4
+                        ? -23
+                        : i == 5
+                        ? -25
+                        : i == 6
+                        ? -20
+                        : i == 7
+                        ? -20
+                        : i == 8
+                        ? -23
+                        : 0,
+
+                    height: i == 1 ? 100 : i == 2 ? 100 : 96,
+                    width:
+                      i == 1
+                        ? 110
+                        : i == 2
+                        ? 110
+                        : i == 4
+                        ? 125
+                        : i == 7
+                        ? 110
+                        : i == 8
+                        ? 110
+                        : 96,
+                    // backgroundColor: activeIndex === i && "#ace403",
+                    // color: activeIndex === i && "black",
+                  }}
+                  key={number._id}
+                  className={`flex justify-center  items-center  text-2xl font-bold ${
+                    activeIndex?.id === number.id ? "active" : ""
+                  }}`}
+                  // className="bg-white"
+                >
+                  <img
+                    style={{
+                      opacity:
+                        activeIndex?.id === number.id
+                          ? 1
+                          : number.count !== 0
+                          ? 0.7
+                          : 0.2,
+                    }}
+                    className="w-full  opacity-[0.5] h-full  object-contain"
+                    width={100}
+                    height={100}
+                    src={assets[i]}
+                    alt=""
+                  />
+                  {/* <p>{i}</p> */}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
         <div className="mt-10">
           {user?.data?.user?.prizeChance > 0 ? (
             <NavLink
@@ -359,16 +372,20 @@ const PuzzlePage = () => {
               Collect Prize
             </NavLink>
           ) : (
-            <button
-              disabled={loadding}
+            <Button
+              disabled={loadingSpin}
               onClick={spinApiHandler}
               className={`flex cursor-pointer items-center gap-2 border rounded-md px-20  py-[13px] text-black  text-md font-medium ${
                 loadding ? "inactive_btn" : "active_btn"
               }`}
+              type="primary"
+              size="small"
+              loading
             >
               <PiSpinnerBallDuotone size={24} />
               <p> Sipn</p>
-            </button>
+              Loading
+            </Button>
           )}
 
           <p className="text-sm mt-2">

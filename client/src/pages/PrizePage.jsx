@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import api from "../api";
 import Leaderboard from "./leaderBoard";
 import PuzzlePage from "./PuzzlePage";
+import { useUser, useUserLogin } from "../userContex";
 
 Modal.setAppElement("#root"); // Accessibility
 
@@ -21,7 +22,8 @@ const SpinWheel = () => {
   const [showConfetti, setShowConfetti] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLeaderboardVisible, setIsLeaderboardVisible] = useState(false);
-
+  const user2 = useUser();
+  const userLogin = useUserLogin();
   const navigate = useNavigate();
 
   const colors = [
@@ -60,9 +62,10 @@ const SpinWheel = () => {
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
-        const userResponse = await api.get("/user/670647442648a652d5ee2b0c");
-        const user = userResponse.data.data;
-        setSpinsLeft(user.prizeChance);
+        // const userResponse = await api.get("/user/" + user?.data?.user?._id);
+        // const user = userResponse.data.data;
+        // setSpinsLeft(user.prizeChance);
+        setSpinsLeft(user2?.data?.user?.prizeChance);
 
         const prizeResponse = await api.get("/prize");
         const prizes = prizeResponse.data.data;
