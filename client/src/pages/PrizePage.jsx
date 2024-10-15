@@ -123,6 +123,16 @@ const SpinWheel = () => {
         setIsSpinning(true);
         setShowConfetti(false);
       }
+      userLogin({
+        ...user2,
+        data: {
+          ...user2?.data,
+          user: {
+            ...user2?.data?.user,
+            prizeChance: user2?.data?.user?.prizeChance - 1,
+          },
+        },
+      });
       setPrize(selectedPrize);
     } catch (error) {
       console.error("Error spinning the prize:", error);

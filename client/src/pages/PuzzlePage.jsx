@@ -49,6 +49,8 @@ const PuzzlePage = () => {
   const [getPuzzle, setGetPuzzle] = useState(false);
 
   useEffect(() => {
+    setLoadingSpin(false);
+
     featchUserPuzzle();
   }, [user]);
   const featchUserPuzzle = async () => {
@@ -375,12 +377,12 @@ const PuzzlePage = () => {
             <Button
               disabled={loadingSpin}
               onClick={spinApiHandler}
-              className={`flex cursor-pointer items-center gap-2 border rounded-md px-20  py-[13px] text-black  text-md font-medium ${
-                loadding ? "inactive_btn" : "active_btn"
+              className={`flex cursor-pointer  items-center gap-2 border rounded-md px-20  py-[13px] text-black  text-md font-medium ${
+                loadingSpin ? "inactive_btn" : "active_btn"
               }`}
               type="primary"
               size="small"
-              loading
+              loading={loadingSpin}
             >
               <PiSpinnerBallDuotone size={24} />
               <p> Sipn</p>
