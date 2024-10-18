@@ -7,32 +7,33 @@ const sharePuzzle = async (req, res, next) => {
   try {
     const { phoneNumber, puzzleId, userId } = req.body;
 
-   
-    const recipientUser = await User.findOne({ phoneNumber });
+    
+    let recipientUser = await User.findOne({ phoneNumber });
     if (!recipientUser) {
-      return next(new AppError("User with this phone number does not exist", 404));
+    
+      recipientUser = new User({
+        phoneNumber
+      });
+      await recipientUser.save();
+      console.log(`New user created with phone number: ${phoneNumber}`);
     }
 
-    
     const sharingUser = await User.findById(userId);
     if (!sharingUser) {
       return next(new AppError("Sharing user not found", 404));
     }
-
 
     const puzzle = await Puzzle.findById(puzzleId);
     if (!puzzle) {
       return next(new AppError("Puzzle not found", 404));
     }
 
-   
     const senderPuzzle = await UserPuzzle.findOne({
       user_id: sharingUser._id,
       puzzle_id: puzzleId,
       isShared: false,
     });
 
-   
     if (!senderPuzzle) {
       return res.status(400).json({
         status: 'fail',
@@ -44,7 +45,7 @@ const sharePuzzle = async (req, res, next) => {
     senderPuzzle.isShared = true;
     await senderPuzzle.save();
 
-  
+    
     const newSharedPuzzle = await UserPuzzle.create({
       user_id: recipientUser._id,
       puzzle_id: puzzleId,
@@ -52,6 +53,7 @@ const sharePuzzle = async (req, res, next) => {
       sharedBy: sharingUser._id,
     });
 
+    
     res.status(200).json({
       status: 'success',
       message: 'Puzzle shared successfully!',

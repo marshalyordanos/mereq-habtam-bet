@@ -186,9 +186,9 @@ const SpinWheel = () => {
               mustStartSpinning={mustSpin}
               prizeNumber={prizeNumber}
               data={rouletteData}
-              outerBorderColor={"#f5f5f5ff"}
+              outerBorderColor={"#cfa81dff"}
               outerBorderWidth={8}
-              radiusLineColor={"#000000"}
+              radiusLineColor={""}
               radiusLineWidth={4}
               outerRadius={80}
               innerRadius={25}
