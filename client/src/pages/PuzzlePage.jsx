@@ -16,6 +16,7 @@ import CustomModal from "../compoents/CustomModal";
 import { Button, message, Spin } from "antd";
 import { useUser, useUserLogin } from "../userContex";
 import { NavLink } from "react-router-dom";
+import Leaderboard from "./leaderBoard";
 // Array of assets for the puzzle pieces
 const assets = [
   AssetOne,
@@ -40,12 +41,18 @@ const PuzzlePage = () => {
   const [numbers, setNumbers] = useState([]);
   const [wonPuzles, wonPuzzles] = useState([{ count: 0, id: 1 }]);
   const [openModal, setOpenModal] = useState(false);
+  const [openPrizeModal, setOpenPrizeModal] = useState(false);
   const [activeIndex, setActiveIndex] = useState(null);
   const [roundsLeft, setRoundsLeft] = useState(2);
   const [selectedPuzzle, setSelectedPuzzle] = useState(null);
   const [ind, setInds] = useState(null);
   const [phone, setPhone] = useState("");
   const [loadding, setLoading] = useState(false);
+  const [prizesData, setPrizesData] = useState([]); 
+  const [loadingPrizes, setLoadingPrizes] = useState(false);
+  const [leaderboardData, setLeaderboardData] = useState([]);
+  const [isLeaderboardVisible , setIsLeaderboardVisible] = useState(true);
+
   const [getPuzzle, setGetPuzzle] = useState(false);
 
   useEffect(() => {
@@ -68,6 +75,77 @@ const PuzzlePage = () => {
       setLoading(false);
     }
   };
+  const fetchPuzzleDetails = async (leaderboardData) => {
+    try {
+      const detailedLeaderboard = await Promise.all(
+        leaderboardData.map(async (user) => {
+          if (user.prize_id) {
+            const prizeResponse = await api.get(`/prize/${user.prize_id}`);
+            const prizeDetails = prizeResponse.data.data;
+            console.log("hhhh", prizeDetails);
+
+            return { ...user, prizeDetails };
+          }
+          return user;
+        })
+      );
+      const rankedLeaderboard = detailedLeaderboard.sort(
+        (a, b) => b.prizeDetails.price - a.prizeDetails.price
+      );
+      setLeaderboardData(rankedLeaderboard);
+    } catch (error) {
+      console.error("Error fetching puzzle details:", error);
+    }
+  };
+
+
+  useEffect(() => {
+    const fetchInitialData = async () => {
+      try {
+         
+      
+        const leaderboardResponse = await api.get("/prize/PrizedUser");
+        const leaderboardData = leaderboardResponse.data.data;
+
+        fetchPuzzleDetails(leaderboardData);
+      } catch (error) {
+        console.error("Error fetching initial data:", error);
+      }
+    };
+    fetchInitialData();
+  }, []);
+
+
+
+
+  
+  const fetchUserPrize = async () => {
+    try {
+      
+      (true); // Start loading
+      if (user) {
+        const res = await api.get(`/prize/history/` + user?.data?.user?._id);
+        console.log("datwwwa", res.data?.data);
+        setPrizesData(res.data?.data); // Store prizes in state
+        // setOpenPrizeModal(true); // Open the modal after fetching data
+      }
+      setLoadingPrizes(false); // Stop loading
+    } catch (error) {
+      // 
+      setLoadingPrizes(false);
+      (false);
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    // setLoadingSpin(false);
+
+    featchUserPuzzle();
+    fetchUserPrize();
+  }, [user]);
+
+
+
   const featchPice = async () => {
     const res = await api.get(`/puzzle?page=${1}&limit=${9}`);
     console.log("data", res.data?.data);
@@ -167,6 +245,7 @@ const PuzzlePage = () => {
       });
       setNumbers(x);
       setOpenModal(false);
+      // setOpenPrizeModal(false);
       message.success(res.data?.message);
     } catch (error) {
       if (error.response.data.message) {
@@ -175,6 +254,7 @@ const PuzzlePage = () => {
       console.log(error);
     }
   };
+  console.log("][[[",leaderboardData)
   return (
     <Container className="text-white ] flex flex-col justify-center items-center w-full  ">
       {openModal && (
@@ -183,6 +263,7 @@ const PuzzlePage = () => {
           setSelectedPuzzle={setSelectedPuzzle}
           openModal={openModal}
           setOpenModal={setOpenModal}
+
         >
           <div class="z-50 max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
             <a href="#">
@@ -238,6 +319,59 @@ const PuzzlePage = () => {
           </div>
         </CustomModal>
       )}
+    {openPrizeModal && (
+        <CustomModal
+          openPrizeModal={openPrizeModal}
+          setOpenPrizeModal={setOpenPrizeModal}
+        >
+          {/* Adjusting the width of the modal and labeling prize name & status */}
+          <div className="z-50 w-[500px] p-6 border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+            <h5 className="mb-4 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+              Prizes
+            </h5>
+            {loadingPrizes ? (
+              <Spin />
+            ) : (
+              <>
+                <table className="table-auto w-full">
+                  <thead>
+                    <tr className="text-left text-gray-400">
+                      <th className="px-4 py-2">Prize Name</th>
+                      <th className="px-4 py-2">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {prizesData.length > 0 ? (
+                      prizesData.map((prize, index) => (
+                        <tr
+                          key={index}
+                          className="border-t border-gray-600 text-gray-300"
+                        >
+                          <td className="px-4 py-2">{prize.prizeName}</td>
+                          <td className="px-4 py-2">{prize.status}</td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="2" className="px-4 py-2 text-center">
+                          No prizes found.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+                <Button
+                  onClick={() => setOpenPrizeModal(false)} // Close the modal when clicked
+                  className="mt-4"
+                  type="primary"
+                >
+                  Close
+                </Button>
+              </>
+            )}
+          </div>
+        </CustomModal>
+      )}
 
       {getPuzzle && (
         <CustomModal
@@ -275,6 +409,21 @@ const PuzzlePage = () => {
           <img className=" absolute  border z-30" src={AssetMain} />
         </div> */}
         <p className="">Play our puzzle game and win exciting prizes!</p>
+  
+        <div className="flex justify-start align-start w-full mt-4">
+  <Button
+    className="spin-btn bg-[#ace403] text-black"
+    type="primary"
+    onClick={() => {
+      setOpenPrizeModal(true);
+    }}
+  >
+    Prizes
+  </Button>
+</div>
+
+    
+        
         <div className="mb-10"></div>
         {/* <div className=" border h-72 w-72 mt-10 rounded-lg"></div> */}
         {loadding ? (
@@ -395,7 +544,25 @@ const PuzzlePage = () => {
           </p>
         </div>
         <div>
-          <div className="max-w-[360px] mb-24 md:mb-10  ">
+          <div className="max-w-[360px] mb-24 md:mb-10   mt-4">
+          {isLeaderboardVisible && (
+            // <div className="max-h-[200px] overflow-y-scroll  bg-black rounded-md p-4">
+            //   <Leaderboard leaderboardData={leaderboardData} />
+            // </div>
+            <div
+              style={{
+                // overflowY: "scroll",
+                // maxHeight: "200px",
+                // scrollbarWidth: "thin",
+                // scrollbarColor: "white transparent", // Firefox
+                // p: 4,
+              }}
+            >
+             
+              <Leaderboard leaderboardData={leaderboardData} />
+            </div>
+          )}
+          
             <p className="font-bold mt-10">Puzzle Pieces</p>
             <div className="flex mt-5 overflow-auto  bg-[#404040]">
               {numbers?.map((number, i) => (
